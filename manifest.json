@@ -1,0 +1,22 @@
+{
+  "name": "Ejercicios para Piano",
+  "short_name": "Piano",
+  "description": "Técnica superior y ejercicios de conservatorio para piano.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icono.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icono.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
