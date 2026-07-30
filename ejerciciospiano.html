@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title>Técnica Superior de Piano - Lucas Gonzalez</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./icono.png">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700;900&display=swap');
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --color-neon: #00f3ff;
+            --color-fucsia: #ff00ff;
+            --color-dorado: #FFD700;
+            --bg-dark: #000000;
+        }
+
+        html, body {
+            background-color: var(--bg-dark); color: #ffffff;
+            font-family: 'Rajdhani', sans-serif; margin: 0; padding: 0; 
+            overflow-x: hidden; user-select: none; -webkit-user-select: none;
+        }
+
+        .sticky-bar {
+            position: sticky; top: 0; background: rgba(5,5,10,0.95); backdrop-filter: blur(10px);
+            z-index: 1000; padding: 15px; border-bottom: 2px solid var(--color-neon);
+            display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.1);
+        }
+        .sticky-btn {
+            background: transparent; border: 2px solid var(--color-neon); color: var(--color-neon);
+            padding: 10px 15px; border-radius: 5px; font-weight: 900; font-family: 'Rajdhani', sans-serif;
+            cursor: pointer; font-size: 1.1em; transition: 0.3s; letter-spacing: 1px;
+        }
+        .sticky-btn:active { background: var(--color-neon); color: #000; }
+        .sticky-btn-fucsia { border-color: var(--color-fucsia); color: var(--color-fucsia); }
+        .sticky-btn-fucsia:active { background: var(--color-fucsia); color: #000; }
+        .sticky-btn-dorado { border-color: var(--color-dorado); color: var(--color-dorado); }
+        .sticky-btn-dorado:active { background: var(--color-dorado); color: #000; }
+
+        .titulo-flet {
+            color: var(--color-neon); font-family: 'Orbitron', sans-serif; font-size: 2.2em; font-weight: 900; 
+            text-align: center; margin-top: 30px; letter-spacing: 3px; text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.5); padding: 0 10px;
+        }
+        .titulo-activacion { color: var(--color-fucsia); font-family: 'Orbitron', sans-serif; font-size: 1.5em; font-weight: 900; text-align: center; margin-top: 40px; letter-spacing: 2px; }
+
+        .pantalla { display: none; width: 100vw; min-height: 100vh; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        .activa { display: flex; }
+
+        .btn-principal {
+            font-family: 'Rajdhani', sans-serif; padding: 18px 25px; margin: 10px; font-size: 1.2em; font-weight: 800;
+            cursor: pointer; border-radius: 8px; transition: 0.3s; width: 85%; max-width: 380px; text-transform: uppercase; letter-spacing: 2px;
+            display: flex; justify-content: center; align-items: center; border: none; flex-direction: column; line-height: 1.2;
+        }
+        .btn-cian { background: transparent; color: var(--color-neon); border: 2px solid var(--color-neon); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        .btn-cian:active { background: var(--color-neon); color: #000; }
+        .btn-fucsia { background: transparent; color: var(--color-fucsia); border: 2px solid var(--color-fucsia); box-shadow: 0 0 15px rgba(255, 0, 255, 0.2); }
+        .btn-fucsia:active { background: var(--color-fucsia); color: #000; }
+        .btn-dorado { background: transparent; color: var(--color-dorado); border: 2px solid var(--color-dorado); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+        .btn-dorado:active { background: var(--color-dorado); color: #000; }
+
+        .input-cyber {
+            font-family: 'Rajdhani', sans-serif; width: 90%; max-width: 420px; padding: 15px;
+            background-color: transparent; color: var(--color-neon); border: 1px solid #444;
+            border-radius: 5px; font-size: 1.2em; outline: none; box-sizing: border-box; font-weight: bold; margin-bottom: 20px;
+        }
+        
+        .grid-niveles { display: grid; grid-template-columns: 1fr; gap: 15px; width: 90%; max-width: 420px; margin-top: 20px; }
+        
+        .tarjeta-ejercicio {
+            background: rgba(10, 10, 15, 0.5); border: none; border-bottom: 1px solid #222;
+            border-left: 4px solid var(--color-fucsia); border-radius: 0 8px 8px 0; padding: 15px; cursor: pointer; transition: all 0.2s;
+        }
+        .tarjeta-ejercicio:active { background: rgba(255, 255, 255, 0.1); }
+        
+        .tarjeta-titulo { font-size: 1.35em; font-weight: 900; color: #fff; margin-bottom: 5px; letter-spacing: 1px; }
+        .tarjeta-desc { font-size: 0.95em; color: #999; font-weight: 500; line-height: 1.3; }
+
+        .visor-tab {
+            width: 100%; max-width: 800px; background: transparent; border: none;
+            padding: 10px; margin-top: 10px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .badge-dificultad {
+            display: inline-block; padding: 5px 12px; border-radius: 4px; font-size: 0.85em; font-weight: 900; letter-spacing: 2px;
+            margin-bottom: 15px; text-transform: uppercase; background: rgba(0,0,0,0.5);
+        }
+        .dif-grado1 { color: #10B981; border: 1px solid #10B981; }
+        .dif-grado2 { color: #FBBF24; border: 1px solid #FBBF24; }
+        .dif-grado3 { color: #F97316; border: 1px solid #F97316; }
+        .dif-grado4 { color: #EF4444; border: 1px solid #EF4444; }
+        .dif-grado5 { color: #A855F7; border: 1px solid #A855F7; }
+
+        .contenedor-teclado {
+            width: 100%; overflow-x: auto; display: flex; justify-content: flex-start;
+            padding: 30px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; margin: 15px 0;
+        }
+        #svg-teclado { min-width: 600px; height: 180px; overflow: visible; margin: 0 auto;}
+        @media (orientation: landscape) { .contenedor-teclado { justify-content: center; overflow-x: hidden; } #svg-teclado { min-width: auto; width: 100%; height: auto; } }
+
+        .controles-reproductor { display: flex; gap: 15px; margin-bottom: 10px; width: 90%; justify-content: center; }
+        .btn-reproductor { width: auto; padding: 10px 20px; font-size: 1.1em; flex: 1; max-width: 200px; margin: 0;}
+
+        .patron-tecnico { font-family: 'Orbitron', sans-serif; font-size: 1.3em; color: var(--color-fucsia); text-align: center; letter-spacing: 5px; margin: 10px 0 20px 0; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); font-weight: 900; }
+
+        .instrucciones { color: #d1d1d1; font-size: 1.1em; margin-top: 20px; line-height: 1.6; width: 90%; text-align: left; }
+        .instruccion-paso { margin-bottom: 12px; border-left: 3px solid #333; padding-left: 15px; background: rgba(255,255,255,0.02); padding-top: 10px; padding-bottom: 10px;}
+        .instruccion-paso strong { font-family: 'Orbitron', sans-serif; font-size: 0.9em; letter-spacing: 1px; color: var(--color-neon);}
+
+        .leyenda-box { width: 90%; background: #0a0a0f; border: 1px solid #222; border-radius: 8px; padding: 15px; margin-top: 30px; font-size: 0.95em; color: #888; }
+        .leyenda-box strong { color: #fff; }
+    </style>
+</head>
+<body>
+
+    <!-- ================= PANTALLA LOGIN ================= -->
+    <div id="pantalla-login" class="pantalla activa">
+        <h1 class="titulo-activacion">ACTIVACIÓN ACADÉMICA</h1>
+        <div style="margin-top: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <p style="color: #777; width: 90%; max-width: 420px; text-align: center; margin-bottom: 20px; font-size: 1.1em;">
+                Ingresa el correo registrado.
+            </p>
+            <input type="email" id="input-email-login" class="input-cyber" placeholder="Email de Compra">
+            <button class="btn-principal btn-fucsia" onclick="intentarActivar()">ACCESO</button>
+            <p id="mensaje-login" style="color: red; font-weight: bold; margin-top: 15px; font-size: 1.2em;"></p>
+        </div>
+    </div>
+
+    <!-- ================= PANTALLA INICIO ================= -->
+    <div id="pantalla-inicio" class="pantalla" style="padding-top: 10px;">
+        <h1 class="titulo-flet" style="font-size: 1.7em;">EJERCICIOS PARA<br>PIANO</h1>
+        <p style="color: #666; margin-bottom: 20px; font-size: 1.1em; text-align: center; width: 90%;">Selecciona el módulo de estudio</p>
+        
+        <button class="btn-principal btn-cian" onclick="abrirNiveles('izquierda')" style="height: 90px; margin-bottom: 5px;">
+            <span>MANO IZQUIERDA</span>
+            <span style="font-size: 0.55em; font-weight: 500; opacity: 0.8; font-family: sans-serif; letter-spacing: 0;">50 Ejercicios: Independencia, Saltos, Polifonía</span>
+        </button>
+        
+        <button class="btn-principal btn-fucsia" onclick="abrirNiveles('derecha')" style="height: 90px; margin-bottom: 5px;">
+            <span>MANO DERECHA</span>
+            <span style="font-size: 0.55em; font-weight: 500; opacity: 0.8; font-family: sans-serif; letter-spacing: 0;">50 Ejercicios: Articulación, Velocidad, Trinos</span>
+        </button>
+
+        <button class="btn-principal btn-dorado" onclick="abrirNiveles('ambas')" style="height: 90px;">
+            <span>AMBAS MANOS</span>
+            <span style="font-size: 0.55em; font-weight: 500; opacity: 0.8; font-family: sans-serif; letter-spacing: 0;">50 Ejercicios: Polirritmia, Simetría, Bach</span>
+        </button>
+    </div>
+
+    <!-- ================= PANTALLA NIVELES ================= -->
+    <div id="pantalla-niveles" class="pantalla" style="padding-top: 0;">
+        <div class="sticky-bar" id="barra-niveles">
+            <select id="filtro-nivel" class="input-cyber" style="width: 65%; margin: 0; padding: 10px; font-size: 1em;" onchange="renderizarEjercicios()">
+                <option value="todos">Ver Todos los Grados</option>
+                <option value="grado1">Grado I: Articulación y Peso</option>
+                <option value="grado2">Grado II: Desarrollo Motor</option>
+                <option value="grado3">Grado III: Arquitectura Polifónica</option>
+                <option value="grado4">Grado IV: Dominio y Extensiones</option>
+                <option value="grado5">Grado V: Nivel Virtuoso</option>
+            </select>
+            <button class="sticky-btn" id="btn-volver-menu" onclick="cambiarPantalla('pantalla-inicio')">🔙 MENÚ</button>
+        </div>
+
+        <h1 class="titulo-flet" id="titulo-mano" style="margin-top: 20px; margin-bottom: 0;">LISTADO</h1>
+        <div class="grid-niveles" id="lista-ejercicios"></div>
+    </div>
+
+    <!-- ================= PANTALLA VISOR ================= -->
+    <div id="pantalla-visor" class="pantalla" style="padding-top: 0;">
+        <div class="sticky-bar" id="barra-visor" style="border-color: var(--color-fucsia);">
+            <div id="visor-badge" class="badge-dificultad dif-grado1" style="margin: 0; padding: 8px 12px; font-size: 0.9em;">GRADO I</div>
+            <button class="sticky-btn sticky-btn-fucsia" id="btn-volver-lista" onclick="cambiarPantalla('pantalla-niveles')">🔙 LISTA</button>
+        </div>
+
+        <h1 class="titulo-flet" style="font-size: 1.5em; margin-top: 20px; margin-bottom: 5px; letter-spacing: 2px;" id="visor-titulo">Titulo</h1>
+        <div id="visor-patron" class="patron-tecnico"></div>
+
+        <div class="visor-tab">
+            <div class="controles-reproductor">
+                <button id="btn-play" class="btn-principal btn-fucsia btn-reproductor" onclick="toggleAnimacion()">▶ REPRODUCIR</button>
+                <button id="btn-restart" class="btn-principal btn-reproductor" style="background:transparent; border: 2px solid var(--color-fucsia); color: var(--color-fucsia);" onclick="reiniciarGrafico()">🔄 REINICIAR</button>
+            </div>
+
+            <div class="contenedor-teclado">
+                <svg id="svg-teclado" viewBox="0 -20 620 200"></svg>
+            </div>
+            
+            <div class="instrucciones" id="visor-instrucciones"></div>
+
+            <div class="leyenda-box">
+                <div style="text-align: center; color: #fff; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; font-family: 'Orbitron', sans-serif;">REFERENCIAS DE PIANO</div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                    <div><strong>Animación Simultánea:</strong> Las notas agrupadas en el mismo pulso se iluminan al mismo tiempo.</div>
+                    <div><strong>1:</strong> Pulgar | <strong>2:</strong> Índice | <strong>3:</strong> Mayor | <strong>4:</strong> Anular | <strong>5:</strong> Meñique</div>
+                    <div><strong>I / D:</strong> (I)zquierda o (D)erecha.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= LOGICA JAVASCRIPT ================= -->
+    <script>
+        // 1. SISTEMA DE LOGIN Y NAVEGACIÓN
+        const URL_RECEPCIONISTA = "https://script.google.com/macros/s/AKfycbx6-2gfl9UGXOi5CQDaEC55_89hsRflJGF8DyiC9jz4hw82mhMaEmeK99Y4VxOKoVW6/exec";
+        
+        function obtenerDeviceID() {
+            let id = localStorage.getItem('piano_device_id');
+            if (!id) {
+                try { if (window.crypto && window.crypto.randomUUID) { id = window.crypto.randomUUID(); } else { id = 'id-' + Math.random().toString(36).substring(2, 15); }
+                } catch(e) { id = 'id-' + Math.random().toString(36).substring(2, 15); }
+                localStorage.setItem('piano_device_id', id);
+            }
+            return id;
+        }
+
+        async function intentarActivar() {
+            let email = document.getElementById('input-email-login').value.trim();
+            let msj = document.getElementById('mensaje-login');
+            if (!email) { msj.innerText = "Por favor, ingresa un correo."; msj.style.color = "red"; return; }
+            msj.innerText = "Conectando con el servidor..."; msj.style.color = "#00f3ff";
+            
+            try {
+                let response = await fetch(URL_RECEPCIONISTA, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ email: email, deviceID: obtenerDeviceID() }) });
+                let data = await response.json();
+                if (data.status === "OK") { localStorage.setItem('piano_activado', 'true'); cambiarPantalla('pantalla-inicio'); } 
+                else { msj.innerText = data.message || "Error de validación"; msj.style.color = "red"; }
+            } catch (error) { msj.innerText = "Error: Sin conexión a internet."; msj.style.color = "red"; }
+        }
+
+        function cambiarPantalla(id) {
+            clearInterval(animacionInterval);
+            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+            document.getElementById(id).classList.add('activa');
+            window.scrollTo(0,0);
+        }
+
+        window.onload = () => { if (localStorage.getItem('piano_activado') === 'true') cambiarPantalla('pantalla-inicio'); };
+
+        // 2. GENERADOR ALGORÍTMICO DE BASE DE DATOS (150 Ejercicios Universitarios)
+        const BASE_DATOS = { izquierda: [], derecha: [], ambas: [] };
+        let idGen = 1;
+
+        try {
+            // --- MANO IZQUIERDA (50 Ejercicios) ---
+            for(let i=1; i<=10; i++) { // Grado 1
+                BASE_DATOS.izquierda.push({
+                    id: idGen++, nivel: "grado1", titulo: `Pischna: Independencia Articular N°${i}`, desc: "Desarrollo de fuerza en los dedos débiles (4 y 5).",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Ejercicios Progresivos - J. Pischna.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> La debilidad del cuarto dedo se debe a conexiones tendinosas compartidas. Aislarlos requiere control neurológico estricto.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Mantené el peso del brazo anclado. Levantá el dedo 4 y 5 articulando exclusivamente desde el nudillo (articulación metacarpofalángica).</div>",
+                    patron: "5 - 4 - 3 - 2 - 1",
+                    // En vez de 'notas', usamos 'pasos' para agrupar por tiempos de ejecución
+                    pasos: [ [{k: 0, t: "5"}], [{k: 2, t: "4"}], [{k: 4, t: "3"}], [{k: 5, t: "2"}], [{k: 7, t: "1"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 2
+                BASE_DATOS.izquierda.push({
+                    id: idGen++, nivel: "grado2", titulo: `Czerny: Desplazamiento Lateral N°${i}`, desc: "Extensión y pasaje del pulgar inaudible.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Escuela de la Velocidad Op. 299 - C. Czerny.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El traslado lateral (arpegio) exige que el pulgar actúe como un pivote invisible sin interrumpir la línea melódica.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> El pulgar (1) debe prepararse y pasar por debajo del dedo medio (3) *antes* de que termine de sonar la nota anterior. No quiebres la muñeca.</div>",
+                    patron: "Pasaje 5-3-2-1-3",
+                    pasos: [ [{k: 0+(i%3), t: "5"}], [{k: 4+(i%3), t: "3"}], [{k: 7+(i%3), t: "2"}], [{k: 12+(i%3), t: "1"}], [{k: 16+(i%3), t: "3"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 3
+                BASE_DATOS.izquierda.push({
+                    id: idGen++, nivel: "grado3", titulo: `Bach: Contrapunto Monomanual N°${i}`, desc: "Bajo estático (nota pedal) y movimiento interno libre.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> El Clave Bien Temperado - J.S. Bach.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> La polifonía en una sola mano obliga al cerebro a procesar dos capas dinámicas independientes (Bajo continuo vs Melodía).</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> El dedo 5 queda sostenido firmemente. Articulá los dedos internos (1, 2, 3) con ligereza, evitando que el esfuerzo afecte la presión del bajo.</div>",
+                    patron: "Pedal Fijo - Melodía Móvil",
+                    pasos: [ [{k: 0, t: "5", hold: true}], [{k: 7, t: "1"}], [{k: 5, t: "2"}], [{k: 4, t: "3"}], [{k: 5, t: "2"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 4
+                BASE_DATOS.izquierda.push({
+                    id: idGen++, nivel: "grado4", titulo: `Chopin: Extensión Op.10 N°1 Modificada ${i}`, desc: "Apertura máxima interdigital.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Estudios Op. 10 - F. Chopin.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> Anatomía del peso del brazo. La mano pequeña puede abarcar grandes distancias no por estiramiento de tendones, sino por rotación pronosupinadora.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> No intentes alcanzar las notas estirando los dedos. Utilizá una rotación lateral fluida del antebrazo, pivoteando sobre cada dedo atacado.</div>",
+                    patron: "Arpegio Abierto (Décimas)",
+                    pasos: [ [{k: 0, t: "5"}], [{k: 7, t: "3"}], [{k: 12, t: "2"}], [{k: 19, t: "1"}], [{k: 12, t: "2"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 5
+                BASE_DATOS.izquierda.push({
+                    id: idGen++, nivel: "grado5", titulo: `Godowsky: Salto Balístico N°${i}`, desc: "Precisión espacial y memoria propioceptiva extrema.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Estudios sobre los Estudios de Chopin - L. Godowsky.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El movimiento balístico confía en la inercia programada del cerebro. Mirar el teclado retrasa el procesamiento visual y produce fallos.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Ejecutá el salto en un arco rápido y curvo desde el hombro. Cerrá los ojos para forzar la confianza en la memoria espacial.</div>",
+                    patron: "Cross-Hand Salto Ciego",
+                    pasos: [ [{k: 0, t: "5"}], [{k: 24, t: "1"}], [{k: 4, t: "3"}], [{k: 23, t: "1"}], [{k: 7, t: "2"}] ]
+                });
+            }
+
+            // --- MANO DERECHA (50 Ejercicios) ---
+            for(let i=1; i<=10; i++) { // Grado 1
+                BASE_DATOS.derecha.push({
+                    id: idGen++, nivel: "grado1", titulo: `Cortot: Transferencia de Peso N°${i}`, desc: "Igualdad sonora en toda la mano.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Principios Racionales de la Técnica Pianística - A. Cortot.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El pulgar (1) pesa mucho más que el meñique (5). Si usamos la misma fuerza para ambos, las notas sonarán desiguales en volumen.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Tocá con el peso del brazo (arm weight). Transfiere la carga del brazo de dedo a dedo sin presionar hacia abajo desde los nudillos.</div>",
+                    patron: "Escala Lineal Controlada",
+                    pasos: [ [{k: 12, t: "1"}], [{k: 14, t: "2"}], [{k: 16, t: "3"}], [{k: 17, t: "4"}], [{k: 19, t: "5"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 2
+                BASE_DATOS.derecha.push({
+                    id: idGen++, nivel: "grado2", titulo: `Clementi: Pasajes de Agilidad N°${i}`, desc: "Velocidad limpia sin acentos indeseados.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Gradus ad Parnassum - M. Clementi.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> La velocidad no nace del esfuerzo, sino de la economía de movimiento. Levantar demasiado los dedos crea tensión y pérdida de tiempo.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Mantené los dedos en contacto continuo con las teclas. El pulgar actúa rápido y por debajo.</div>",
+                    patron: "1 - 2 - 3 - 1 - 2 - 3",
+                    pasos: [ [{k: 12, t: "1"}], [{k: 14, t: "2"}], [{k: 16, t: "3"}], [{k: 17, t: "1"}], [{k: 19, t: "2"}], [{k: 21, t: "3"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 3
+                BASE_DATOS.derecha.push({
+                    id: idGen++, nivel: "grado3", titulo: `Hanon: Trino Sostenido N°${i}`, desc: "Resistencia neuromuscular en dedos 4 y 5.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> El Pianista Virtuoso (Tercera Parte) - C.L. Hanon.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> Aislar los dedos externos obliga a separar las conexiones fibrosas del tendón extensor común.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Mantené el pulgar firmemente anclado. Ejecutá el trino rápido y superficial; no presiones hasta el fondo (escape de la tecla).</div>",
+                    patron: "Anclaje y Trino Rápido",
+                    pasos: [ [{k: 12, t: "1", hold: true}], [{k: 17, t: "4"}], [{k: 19, t: "5"}], [{k: 17, t: "4"}], [{k: 19, t: "5"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 4
+                BASE_DATOS.derecha.push({
+                    id: idGen++, nivel: "grado4", titulo: `Liszt: Repetición Estructural N°${i}`, desc: "Cambio rápido de dedos sobre la misma nota.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Estudios Trascendentales (La Campanella) - F. Liszt.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> La mecánica del piano (doble escape) permite repetir notas a alta velocidad si se retira el dedo rápido. Repetir con el mismo dedo tensiona el brazo.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> 'Rascá' la tecla hacia la palma de la mano alternando los dedos 3, 2 y 1.</div>",
+                    patron: "3-2-1 (Misma Tecla)",
+                    pasos: [ [{k: 19, t: "3"}], [{k: 19, t: "2"}], [{k: 19, t: "1"}], [{k: 19, t: "3"}], [{k: 19, t: "2"}] ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 5
+                BASE_DATOS.derecha.push({
+                    id: idGen++, nivel: "grado5", titulo: `Rachmaninoff: Arquitectura de Acordes N°${i}`, desc: "Densidad sonora, balance y voicing.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Preludios Op. 23 - S. Rachmaninoff.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> Un acorde de 4 notas no debe sonar plano. El 'Voicing' exige darle más peso a la nota melódica (meñique) que a las internas.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Dejá caer el peso muerto de todo tu brazo desde los hombros hacia el fondo del teclado, inclinando milimétricamente la mano hacia la derecha.</div>",
+                    patron: "Bloque Sonoro (Voicing)",
+                    pasos: [ [{k: 12, t: "1"}, {k: 16, t: "2"}, {k: 19, t: "3"}, {k: 24, t: "5"}], [{k: 11, t: "1"}, {k: 15, t: "2"}, {k: 18, t: "3"}, {k: 23, t: "5"}] ]
+                });
+            }
+
+            // --- AMBAS MANOS (50 Ejercicios - SINCRONIZADOS Y SIMULTÁNEOS) ---
+            for(let i=1; i<=10; i++) { // Grado 1
+                BASE_DATOS.ambas.push({
+                    id: idGen++, nivel: "grado1", titulo: `Brahms: Simetría Cerebral N°${i}`, desc: "Movimiento contrario (espejo) simultáneo.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> 51 Ejercicios (Vol. 1) - J. Brahms.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El movimiento simétrico explota la tendencia natural del cerebro a sincronizar los hemisferios. Es más fácil neurológicamente tocar en movimiento contrario que en paralelo.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Ambas manos atacan la tecla exactamente en el mismo milisegundo. La caída de peso debe ser idéntica.</div>",
+                    patron: "Espejo Estricto Simultáneo",
+                    // Notas agrupadas en el mismo paso para brillar juntas
+                    pasos: [
+                        [{k: 12, t: "1I"}, {k: 12, t: "1D"}],
+                        [{k: 11, t: "2I"}, {k: 14, t: "2D"}],
+                        [{k: 9, t: "3I"}, {k: 16, t: "3D"}],
+                        [{k: 7, t: "4I"}, {k: 17, t: "4D"}],
+                        [{k: 5, t: "5I"}, {k: 19, t: "5D"}]
+                    ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 2
+                BASE_DATOS.ambas.push({
+                    id: idGen++, nivel: "grado2", titulo: `Czerny: Paralelismo y Unísono N°${i}`, desc: "Escalas a dos manos cruzando pulgares asimétricamente.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> El Arte de la Destreza Op. 740 - C. Czerny.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> A diferencia del espejo, el movimiento paralelo exige cruzar los dedos en momentos distintos (ej. Izquierda cruza el dedo 3, mientras la derecha cruza el pulgar). Esto requiere disociación pura.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Igualar volumen. Ninguna de las dos manos debe escucharse más fuerte que la otra.</div>",
+                    patron: "Escala Ascendente Paralela",
+                    pasos: [
+                        [{k: 0, t: "5I"}, {k: 12, t: "1D"}],
+                        [{k: 2, t: "4I"}, {k: 14, t: "2D"}],
+                        [{k: 4, t: "3I"}, {k: 16, t: "3D"}],
+                        [{k: 5, t: "2I"}, {k: 17, t: "1D (Cruce)"}],
+                        [{k: 7, t: "1I"}, {k: 19, t: "2D"}]
+                    ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 3
+                BASE_DATOS.ambas.push({
+                    id: idGen++, nivel: "grado3", titulo: `Bach: Contrapunto Independiente N°${i}`, desc: "Intersección rítmica a dos voces separadas.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Invenciones a Dos Voces - J.S. Bach.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El contrapunto exige no pensar verticalmente (en acordes), sino seguir dos líneas horizontales que tienen lógica propia y no dependen una de la otra.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Articulación separada (Non Legato) en una mano, mientras la otra toca unísonos (Legato) continuos.</div>",
+                    patron: "Diálogo de Voces",
+                    pasos: [
+                        [{k: 0, t: "5I"}, {k: 16, t: "3D"}],
+                        [{k: 4, t: "3I"}], // Sola izquierda
+                        [{k: 7, t: "1I"}, {k: 14, t: "2D"}],
+                        [{k: 12, t: "1D"}], // Sola derecha
+                        [{k: 0, t: "5I"}, {k: 16, t: "3D"}]
+                    ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 4
+                BASE_DATOS.ambas.push({
+                    id: idGen++, nivel: "grado4", titulo: `Chopin: Polirritmia Matemática 3 vs 4 N°${i}`, desc: "Tresillo (Izq) contra Semicorcheas (Der).",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Fantasía-Impromptu Op. 66 - F. Chopin.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> La polirritmia se rige por el Mínimo Común Múltiplo. Para 3 vs 4 (MCM=12), la subdivisión estructural exige que ataquen juntas SOLO en el tiempo 1. La derecha ataca en 1, 4, 7, 10; la izquierda en 1, 5, 9.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> Estudiar primero rítmicamente sobre una mesa hasta automatizar la subdivisión matemática sin contar mentalmente.</div>",
+                    patron: "3 contra 4 (MCM=12)",
+                    pasos: [
+                        [{k: 0, t: "5I (T.Fuerte)"}, {k: 12, t: "1D (T.Fuerte)"}],
+                        [{k: 16, t: "3D"}],
+                        [{k: 7, t: "1I"}],
+                        [{k: 19, t: "5D"}],
+                        [{k: 4, t: "3I"}],
+                        [{k: 16, t: "3D"}]
+                    ]
+                });
+            }
+            for(let i=1; i<=10; i++) { // Grado 5
+                BASE_DATOS.ambas.push({
+                    id: idGen++, nivel: "grado5", titulo: `Scarlatti: Cruce Aéreo Extremo N°${i}`, desc: "Salto espacial con la mano izquierda cruzando por sobre la derecha.",
+                    instrucciones: "<div class='instruccion-paso'><strong>📚 FUENTE:</strong> Sonatas (K.27) - D. Scarlatti / F. Liszt.</div><div class='instruccion-paso'><strong>🧠 TEORÍA:</strong> El cerebro pierde su referencia de ejes cuando la mano que gobierna los graves debe operar físicamente en la zona de los agudos cruzando el cuerpo.</div><div class='instruccion-paso'><strong>⚙️ TÉCNICA:</strong> La mano derecha mantiene un obstinato rítmico inalterable. La izquierda despega y vuela en parábola para tocar una nota sobreaguda.</div>",
+                    patron: "Cruce Cruzado Virtuoso",
+                    pasos: [
+                        [{k: 0, t: "5I"}, {k: 16, t: "3D"}],
+                        [{k: 12, t: "1D"}],
+                        [{k: 24, t: "2I (Cruzando!)"}, {k: 16, t: "3D"}],
+                        [{k: 12, t: "1D"}],
+                        [{k: 0, t: "5I"}, {k: 16, t: "3D"}]
+                    ]
+                });
+            }
+
+        } catch(error) { console.error("Error BD Piano", error); }
+
+        // 3. UI, ANIMACIÓN Y GRÁFICOS SVG (MOTOR DE PASOS SIMULTÁNEOS)
+        let manoSeleccionada = "ambas";
+        let animacionInterval = null;
+        let estaReproduciendo = false;
+        let indexActualAnimacion = -1; 
+        
+        let notasPlanas = []; // Almacenamos SVG con referencia a qué 'paso' pertenecen
+        let colorTemaActual = "#00f3ff";
+
+        function abrirNiveles(mano) {
+            manoSeleccionada = mano;
+            let tit = document.getElementById('titulo-mano');
+            let colorBase;
+            if (mano === "izquierda") { tit.innerText = "MECÁNICA IZQUIERDA"; colorBase = "var(--color-neon)"; }
+            else if (mano === "derecha") { tit.innerText = "MECÁNICA DERECHA"; colorBase = "var(--color-fucsia)"; }
+            else { tit.innerText = "AMBAS MANOS"; colorBase = "var(--color-dorado)"; }
+            
+            tit.style.color = colorBase;
+            document.getElementById('barra-niveles').style.borderColor = colorBase;
+            
+            let btnVolver = document.getElementById('btn-volver-menu');
+            btnVolver.style.borderColor = colorBase; btnVolver.style.color = colorBase;
+
+            let filtro = document.getElementById('filtro-nivel');
+            filtro.style.borderColor = colorBase; filtro.style.color = colorBase; filtro.value = "todos";
+            
+            renderizarEjercicios();
+            cambiarPantalla('pantalla-niveles');
+        }
+
+        function renderizarEjercicios() {
+            const filtro = document.getElementById('filtro-nivel').value;
+            const contenedor = document.getElementById('lista-ejercicios');
+            contenedor.innerHTML = '';
+
+            let ejercicios = BASE_DATOS[manoSeleccionada];
+            if (filtro !== "todos") { ejercicios = ejercicios.filter(e => e.nivel === filtro); }
+
+            let colorBase = manoSeleccionada === "izquierda" ? "var(--color-neon)" : (manoSeleccionada === "derecha" ? "var(--color-fucsia)" : "var(--color-dorado)");
+
+            ejercicios.forEach(ej => {
+                let badgeClass = "dif-" + ej.nivel;
+                let titulosGrados = { "grado1": "GRADO I", "grado2": "GRADO II", "grado3": "GRADO III", "grado4": "GRADO IV", "grado5": "GRADO V" };
+                let nivelTxt = titulosGrados[ej.nivel] || ej.nivel.toUpperCase();
+
+                let tarjeta = document.createElement('div');
+                tarjeta.className = 'tarjeta-ejercicio';
+                tarjeta.style.borderLeftColor = colorBase;
+                tarjeta.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <div class="tarjeta-titulo">${ej.titulo}</div>
+                    </div>
+                    <span class="badge-dificultad ${badgeClass}">${nivelTxt}</span>
+                    <div class="tarjeta-desc">${ej.desc}</div>
+                `;
+                tarjeta.onclick = () => abrirVisor(ej.id);
+                contenedor.appendChild(tarjeta);
+            });
+        }
+
+        function abrirVisor(idEjercicio) {
+            let ej = BASE_DATOS[manoSeleccionada].find(e => e.id === idEjercicio);
+            document.getElementById('visor-titulo').innerText = ej.titulo;
+            document.getElementById('visor-instrucciones').innerHTML = ej.instrucciones;
+            document.getElementById('visor-patron').innerText = ej.patron;
+            
+            colorTemaActual = manoSeleccionada === "izquierda" ? "var(--color-neon)" : (manoSeleccionada === "derecha" ? "var(--color-fucsia)" : "var(--color-dorado)");
+            
+            let badge = document.getElementById('visor-badge');
+            let titulosGrados = {"grado1": "GRADO I", "grado2": "GRADO II", "grado3": "GRADO III", "grado4": "GRADO IV", "grado5": "GRADO V"};
+            badge.innerText = titulosGrados[ej.nivel];
+            badge.className = 'badge-dificultad dif-' + ej.nivel;
+
+            document.getElementById('barra-visor').style.borderColor = colorTemaActual;
+            let btnLista = document.getElementById('btn-volver-lista');
+            btnLista.style.borderColor = colorTemaActual; btnLista.style.color = colorTemaActual;
+
+            let btnPlay = document.getElementById('btn-play');
+            btnPlay.style.borderColor = colorTemaActual; btnPlay.style.color = colorTemaActual;
+            
+            let btnRestart = document.getElementById('btn-restart');
+            btnRestart.style.borderColor = colorTemaActual; btnRestart.style.color = colorTemaActual;
+            
+            reiniciarGrafico();
+            dibujarTecladoSVG(ej.pasos, colorTemaActual);
+            cambiarPantalla('pantalla-visor');
+        }
+
+        // MOTOR VECTORIAL PIANO
+        function dibujarTecladoSVG(pasos, colorTema) {
+            let svg = document.getElementById('svg-teclado');
+            svg.innerHTML = '';
+
+            const isWhite = [true, false, true, false, true, true, false, true, false, true, false, true];
+            let keysMap = [];
+            let whiteIndex = 0;
+            const WHITE_W = 40; const WHITE_H = 160;
+            const BLACK_W = 24; const BLACK_H = 100;
+            const TOTAL_KEYS = 25; // 2 octavas (C to C)
+
+            // Mapeo
+            for(let k=0; k<TOTAL_KEYS; k++) {
+                let noteInOct = k % 12;
+                if(isWhite[noteInOct]) {
+                    keysMap[k] = { type: 'w', x: whiteIndex * WHITE_W, yDot: WHITE_H - 25 };
+                    whiteIndex++;
+                } else {
+                    keysMap[k] = { type: 'b', x: (whiteIndex - 1) * WHITE_W + (WHITE_W - BLACK_W/2), yDot: BLACK_H - 20 };
+                }
+            }
+
+            let svgWidth = whiteIndex * WHITE_W;
+            svg.setAttribute('viewBox', `-10 -10 ${svgWidth + 20} 190`);
+
+            // Dibujar teclado base
+            let bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bg.setAttribute("x", 0); bg.setAttribute("y", 0); bg.setAttribute("width", svgWidth); bg.setAttribute("height", WHITE_H);
+            bg.setAttribute("fill", "#111"); svg.appendChild(bg);
+
+            // Blancas
+            for(let k=0; k<TOTAL_KEYS; k++) {
+                if(keysMap[k].type === 'w') {
+                    let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", keysMap[k].x); rect.setAttribute("y", 0);
+                    rect.setAttribute("width", WHITE_W); rect.setAttribute("height", WHITE_H);
+                    rect.setAttribute("fill", "#fff"); rect.setAttribute("stroke", "#000"); rect.setAttribute("stroke-width", "2");
+                    rect.setAttribute("rx", "3"); svg.appendChild(rect);
+                }
+            }
+            // Negras
+            for(let k=0; k<TOTAL_KEYS; k++) {
+                if(keysMap[k].type === 'b') {
+                    let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", keysMap[k].x); rect.setAttribute("y", 0);
+                    rect.setAttribute("width", BLACK_W); rect.setAttribute("height", BLACK_H);
+                    rect.setAttribute("fill", "#0a0a0f"); rect.setAttribute("stroke", "#333"); rect.setAttribute("stroke-width", "1");
+                    rect.setAttribute("rx", "2"); svg.appendChild(rect);
+                }
+            }
+
+            // Convertir 'pasos' a lista plana para dibujar los círculos
+            notasPlanas = [];
+            pasos.forEach((pasoArray, stepIdx) => {
+                pasoArray.forEach(notaObj => {
+                    notasPlanas.push({
+                        ...notaObj,
+                        stepIndex: stepIdx // Guardamos en qué paso temporal va esta nota
+                    });
+                });
+            });
+
+            // Dibujar Líneas conectoras secuenciales (solo visual suave)
+            for(let i=1; i<notasPlanas.length; i++) {
+                let prev = notasPlanas[i-1]; let curr = notasPlanas[i];
+                // Solo conectar si saltan en el tiempo (para evitar rayas raras en polifonía estática)
+                if(prev.stepIndex !== curr.stepIndex) {
+                    let px = keysMap[prev.k].x + (keysMap[prev.k].type==='w' ? WHITE_W/2 : BLACK_W/2); let py = keysMap[prev.k].yDot;
+                    let cx = keysMap[curr.k].x + (keysMap[curr.k].type==='w' ? WHITE_W/2 : BLACK_W/2); let cy = keysMap[curr.k].yDot;
+                    
+                    let link = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    link.setAttribute("x1", px); link.setAttribute("y1", py); link.setAttribute("x2", cx); link.setAttribute("y2", cy);
+                    link.setAttribute("stroke", colorTema); link.setAttribute("stroke-width", 1); link.setAttribute("stroke-dasharray", "3,5"); link.style.opacity = 0.3; 
+                    svg.appendChild(link);
+                }
+            }
+
+            // Dibujar las Notas (Puntos SVG)
+            notasPlanas.forEach((notaPlana, i) => {
+                let x = keysMap[notaPlana.k].x + (keysMap[notaPlana.k].type==='w' ? WHITE_W/2 : BLACK_W/2);
+                let y = keysMap[notaPlana.k].yDot;
+
+                let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.style.transition = "all 0.15s ease-out"; g.style.transformOrigin = `${x}px ${y}px`;
+                
+                // DATA ATRIBUTOS PARA LA ANIMACIÓN (Simultaneidad)
+                g.dataset.step = notaPlana.stepIndex;
+                g.dataset.hold = notaPlana.hold === true ? "true" : "false";
+                g.dataset.activada = "false"; 
+                
+                // Guardamos el grupo en la nota para accederlo fácil
+                notaPlana.svgGroup = g;
+
+                let circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circ.setAttribute("cx", x); circ.setAttribute("cy", y); circ.setAttribute("r", 15); circ.setAttribute("fill", colorTema);
+                g.appendChild(circ);
+
+                let txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", x); txt.setAttribute("y", y + 4.5); txt.setAttribute("fill", "#000"); txt.setAttribute("font-size", "14px"); txt.setAttribute("font-weight", "900"); txt.setAttribute("text-anchor", "middle");
+                
+                let textStr = notaPlana.t;
+                if(textStr.length > 2) { txt.setAttribute("font-size", "9px"); txt.setAttribute("y", y + 3); }
+                txt.textContent = textStr; 
+                g.appendChild(txt);
+                
+                svg.appendChild(g);
+            });
+            
+            totalSteps = pasos.length;
+            reiniciarGrafico();
+        }
+
+        let totalSteps = 0;
+
+        function toggleAnimacion() {
+            let btn = document.getElementById('btn-play');
+            if(estaReproduciendo) {
+                clearInterval(animacionInterval); 
+                btn.innerText = "▶ CONTINUAR"; btn.style.backgroundColor = "transparent"; btn.style.color = colorTemaActual;
+                estaReproduciendo = false;
+            } else {
+                btn.innerText = "⏸ PAUSAR"; btn.style.backgroundColor = colorTemaActual; btn.style.color = "#000";
+                estaReproduciendo = true;
+                
+                if(indexActualAnimacion === -1) indexActualAnimacion = 0;
+                tickAnimacion(); animacionInterval = setInterval(tickAnimacion, 700);
+            }
+        }
+
+        function tickAnimacion() {
+            // Limpieza de anclajes si volvemos al principio
+            if (indexActualAnimacion === 0) {
+                notasPlanas.forEach(n => n.svgGroup.dataset.activada = "false");
+            }
+
+            notasPlanas.forEach(nota => {
+                let g = nota.svgGroup;
+                let stepDeEstaNota = parseInt(g.dataset.step);
+                let isHold = g.dataset.hold === "true";
+                
+                // Si la nota pertenece al "Paso Temporal" actual (Puede haber múltiples!)
+                if (stepDeEstaNota === indexActualAnimacion) {
+                    g.style.opacity = "1"; g.style.transform = "scale(1.35)"; g.style.filter = `drop-shadow(0 0 15px ${colorTemaActual})`;
+                    if(isHold) g.dataset.activada = "true"; 
+                } else {
+                    // Si ya pasó y tiene memoria de fijación (Bach, Clementi)
+                    if (isHold && g.dataset.activada === "true") {
+                        g.style.opacity = "0.9"; g.style.transform = "scale(1)"; g.style.filter = `drop-shadow(0 0 8px ${colorTemaActual})`;
+                    } else {
+                        // Notas apagadas
+                        g.style.opacity = "0.3"; g.style.transform = "scale(0.85)"; g.style.filter = "none";
+                    }
+                }
+            });
+            indexActualAnimacion = (indexActualAnimacion + 1) % totalSteps;
+        }
+
+        function reiniciarGrafico() {
+            clearInterval(animacionInterval); estaReproduciendo = false; indexActualAnimacion = -1; 
+            
+            let btn = document.getElementById('btn-play');
+            btn.innerText = "▶ REPRODUCIR"; btn.style.backgroundColor = "transparent"; btn.style.color = colorTemaActual;
+
+            notasPlanas.forEach(nota => { 
+                let g = nota.svgGroup;
+                g.dataset.activada = "false";
+                g.style.opacity = "1"; g.style.transform = "scale(1)"; g.style.filter = "none"; 
+            });
+        }
+    </script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js?v=pianofinal')
+                    .then(reg => console.log('SW Registrado'))
+                    .catch(err => console.log('Error SW:', err));
+            });
+        }
+    </script>
+</body>
+</html>
