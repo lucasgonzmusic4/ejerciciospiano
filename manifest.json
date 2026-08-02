@@ -1,6 +1,6 @@
 {
   "name": "Ejercicios para Piano",
-  "short_name": "Piano",
+  "short_name": "Ejercicios Piano",
   "description": "Técnica superior y ejercicios de conservatorio para piano.",
   "start_url": "./index.html",
   "display": "standalone",
